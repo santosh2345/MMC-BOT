@@ -15,10 +15,10 @@ async def on_ready():
     print(f"Bot logged in as {bot.user}")
 
 date_of_post =0
-
-@bot.command()
+first = '1'
+# @bot.command()
 async def scrape(ctx):
-    # Your scraping logic here
+    # scraping logic
     global first
     global date_of_post
     # print("scrape call bhayo")
@@ -32,7 +32,7 @@ async def scrape(ctx):
         print(posts)
         for post in posts:
             print("inside post loop")
-            if first == "1":
+            if first == '1':
                 print("first post=" + first)
                 text = post.get("text", "No text available")
                 post_image = post.get("images", "image chhaina")
@@ -55,7 +55,6 @@ async def scrape(ctx):
                     embed = discord.Embed(title="", description=text)
                     embed.set_author(name='Mechi Multiple Campus', url=post['post_url'], icon_url='https://scontent.fktm3-1.fna.fbcdn.net/v/t39.30808-6/359794631_752045040262800_2453124096265258578_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=be3454&_nc_ohc=QRR_QyYZgnMAX97Vs4-&_nc_ht=scontent.fktm3-1.fna&oh=00_AfDP6GzY4O6SAXH63AXMD6XDJSDPED_b0yf59i_g15UNdQ&oe=64DC8E4D')
                     for image in post_image:
-
                         embed.set_image(url=image)
                     # await ctx.send("data fetched...")
                     await ctx.send(embed=embed)
@@ -69,36 +68,18 @@ async def scrape(ctx):
         scraped_data.append(f"An error occurred: {e}")
 
     
-
-first = '1'
-@tasks.loop(minutes=5)  # Adjust the interval as needed
-async def scrape_task(ctx, channel_id, first_post):
-    # Get the channel where you want to send the updates
-    channel = bot.get_channel(int(channel_id))
-
-    
-    # Your scraping logic here
-    global first
-    # await ctx.send("scrapping is under scrape_task function")
-    # print("first  ko value in  scrape_task"+ first)
-    if first=='1':
-        await scrape(ctx)
-        # print("first = 1 call bhayo")
-        first = '0'
-    else:
-        # print("first 0 bhayo")
-        await scrape(ctx)
+@tasks.loop(seconds=10)  # Adjust the interval as needed
+async def scrape_task(ctx):
+    await scrape(ctx)
+        
 
 
 @bot.command()
 async def start(ctx):
-    channel_id = 999
-    print("channel id = "+channel_id)
-    # print("start command called")
+    print("start command called")
     if not scrape_task.is_running():
-        first_post = '1'
         await ctx.send("Scraping task started.")
-        await scrape_task.start(ctx, channel_id, first_post)
+        await scrape_task.start(ctx)
     else:
         await ctx.send("Scraping task is already running.")
 
