@@ -72,24 +72,29 @@ async def scrape(ctx):
 async def scrape_task(ctx):
     await scrape(ctx)
         
+@bot.command()
+async def yo(ctx):
+    await ctx.send("Lyangs nagarana bhai, malai disturb hunxa")
+
+
 
 
 @bot.command()
 async def start(ctx):
     print("start command called")
     if not scrape_task.is_running():
-        await ctx.send("Scraping task started.")
+        await ctx.send("MMC BOT started successfully. Now please wait until the Mechi Multiple Campus uploads the new post")
         await scrape_task.start(ctx)
     else:
-        await ctx.send("Scraping task is already running.")
+        await ctx.send("MMC BOT is already running.")
 
 @bot.command()
 async def stop(ctx):
     if scrape_task.is_running():
         scrape_task.cancel()
-        await ctx.send("Scraping task stopped.")
+        await ctx.send("MMC BOT stopped.")
     else:
-        await ctx.send("Scraping task is not running.")
+        await ctx.send("MMC BOT is not running.")
 
 @bot.event
 async def on_command_error(ctx, error):
